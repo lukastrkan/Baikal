@@ -15,6 +15,7 @@ def follow_link_containing(browser: mechanicalsoup.StatefulBrowser, text_substri
         raise RuntimeError(f"No link containing '{text_substring}' found on page")
     browser.follow_link(link)
 
+
 def setup_admin_password(browser: mechanicalsoup.StatefulBrowser):
     browser.open(BASE_URL)
     page = browser.get_current_page()
