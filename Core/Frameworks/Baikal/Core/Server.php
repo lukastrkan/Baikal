@@ -155,6 +155,14 @@ class Server {
         $this->server = new \Sabre\DAV\Server($nodes);
         $this->server->setBaseUri($this->baseUri);
 
+        if (!empty($config['system']['sentry_dsn'])) {
+            $this->server->addPlugin(new \vhs\SentryPlugin(
+                $config['system']['sentry_dsn'],
+                $config['system']['failed_access_message'] ?? '',
+                (float) ($config['system']['sentry_traces_sample_rate'] ?? 0.0)
+            ));
+        }
+
         $this->server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend, $this->authRealm));
         $this->server->addPlugin(new \Sabre\DAVACL\Plugin());
         $this->server->addPlugin(new \Sabre\DAV\Browser\Plugin());
@@ -169,11 +177,11 @@ class Server {
         if ($this->enableCalDAV) {
             $this->server->addPlugin(new \Sabre\CalDAV\Plugin());
             $this->server->addPlugin(new \Sabre\CalDAV\ICSExportPlugin());
-            //$this->server->addPlugin(new \Sabre\CalDAV\Schedule\Plugin());
+            $this->server->addPlugin(new \vhs\SchedulePlugin());
             $this->server->addPlugin(new \Sabre\DAV\Sharing\Plugin());
             $this->server->addPlugin(new \Sabre\CalDAV\SharingPlugin());
             if (isset($config['system']["invite_from"]) && $config['system']["invite_from"] !== "") {
-                $this->server->addPlugin(new \Sabre\CalDAV\Schedule\IMipPlugin($config['system']["invite_from"]));
+                $this->server->addPlugin(new \vhs\IMipPlugin($config['system']["invite_from"]));
             }
         }
         if ($this->enableCardDAV) {
@@ -181,15 +189,18 @@ class Server {
             $this->server->addPlugin(new \Sabre\CardDAV\VCFExportPlugin());
         }
 
-        $this->server->on('exception', [$this, 'exception']);
+        if (empty($config['system']['sentry_dsn'])) {
+            $this->server->on('exception', [$this, 'exception']);
+        }
     }
 
     /**
      * Log failed accesses, for further processing by tools like Fail2Ban.
+     * Only used when Sentry is not configured (SentryPlugin handles this otherwise).
      *
      * @return void
      */
-    function exception($e) {
+    function exception(\Throwable $e) {
         if ($e instanceof \Sabre\DAV\Exception\NotAuthenticated) {
             // Applications may make their first call without auth so don't log these attempts
             // Pattern from sabre/dav/lib/DAV/Auth/Backend/AbstractDigest.php
@@ -201,7 +212,7 @@ class Server {
                 }
             }
         } else {
-            error_log($e);
+            error_log((string) $e);
         }
     }
 }

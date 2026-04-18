@@ -15,21 +15,12 @@
     ],
     "homepage": "https://sabre.io/baikal/",
     "license": "GPL-3.0-only",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/lukastrkan/vobject"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/lukastrkan/dav"
-        }
-    ],
     "require": {
         "php": "^8.2",
         "sabre/dav": "dev-master",
         "twig/twig": "~3.22.0",
         "symfony/yaml": "~7.3.5",
+        "sentry/sentry": "^4.0",
         "ext-dom": "*",
         "ext-pdo": "*",
         "ext-zlib": "*"
@@ -46,7 +37,8 @@
         "psr-0": {
             "Baikal": "Core/Frameworks/",
             "Flake": "Core/Frameworks/",
-            "Formal": "Core/Frameworks/"
+            "Formal": "Core/Frameworks/",
+            "vhs": "Core/Frameworks/"
         }
     },
     "support": {

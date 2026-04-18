@@ -43,6 +43,8 @@ class Standard extends \Baikal\Model\Config {
         // could be set to different value when migrating from legacy config
         "auth_realm"            => "BaikalDAV",
         "base_uri"              => "",
+        "sentry_dsn"                  => "",
+        "sentry_traces_sample_rate"   => 0.0,
     ];
 
     function __construct() {
@@ -74,6 +76,18 @@ class Standard extends \Baikal\Model\Config {
             "prop"  => "invite_from",
             "label" => "Email invite sender address",
             "help"  => "Leave empty to disable sending invite emails",
+        ]));
+
+        $oMorpho->add(new \Formal\Element\Text([
+            "prop"  => "sentry_dsn",
+            "label" => "Sentry DSN",
+            "help"  => "Leave empty to disable Sentry error tracking",
+        ]));
+
+        $oMorpho->add(new \Formal\Element\Text([
+            "prop"  => "sentry_traces_sample_rate",
+            "label" => "Sentry traces sample rate",
+            "help"  => "Float 0.0–1.0. Set to 1.0 to profile all requests, 0.0 to disable.",
         ]));
 
         $oMorpho->add(new \Formal\Element\Listbox([
