@@ -181,7 +181,7 @@ class Server {
             $this->server->addPlugin(new \Sabre\DAV\Sharing\Plugin());
             $this->server->addPlugin(new \Sabre\CalDAV\SharingPlugin());
             if (isset($config['system']["invite_from"]) && $config['system']["invite_from"] !== "") {
-                $this->server->addPlugin(new \vhs\IMipPlugin($config['system']["invite_from"]));
+                $this->server->addPlugin(new \vhs\IMipPlugin($config['system']["invite_from"], $config['smtp'] ?? []));
             }
         }
         if ($this->enableCardDAV) {

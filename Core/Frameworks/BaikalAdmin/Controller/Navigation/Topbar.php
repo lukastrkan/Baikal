@@ -35,13 +35,14 @@ class Topbar extends \Flake\Core\Controller {
         $oView = new \BaikalAdmin\View\Navigation\Topbar();
 
         $sCurrentRoute = $GLOBALS["ROUTER"]::getCurrentRoute();
-        $sActiveHome = $sActiveUsers = $sActiveSettingsStandard = $sActiveSettingsDatabase = "";
+        $sActiveHome = $sActiveUsers = $sActiveSettingsStandard = $sActiveSettingsDatabase = $sActiveSettingsSmtp = "";
 
         $sControllerForDefaultRoute = $GLOBALS["ROUTER"]::getControllerForRoute("default");
         $sHomeLink = $sControllerForDefaultRoute::link();
         $sUsersLink = \BaikalAdmin\Controller\Users::link();
         $sSettingsStandardLink = \BaikalAdmin\Controller\Settings\Standard::link();
         $sSettingsDatabaseLink = \BaikalAdmin\Controller\Settings\Database::link();
+        $sSettingsSmtpLink = \BaikalAdmin\Controller\Settings\Smtp::link();
         $sLogoutLink = \BaikalAdmin\Controller\Logout::link();
 
         if ($sCurrentRoute === "default") {
@@ -63,6 +64,10 @@ class Topbar extends \Flake\Core\Controller {
             $sActiveSettingsDatabase = "active";
         }
 
+        if ($sCurrentRoute === $GLOBALS["ROUTER"]::getRouteForController("\BaikalAdmin\Controller\Settings\Smtp")) {
+            $sActiveSettingsSmtp = "active";
+        }
+
         $oView->setData("activehome", $sActiveHome);
         $oView->setData("activeusers", $sActiveUsers);
         $oView->setData("activesettingsstandard", $sActiveSettingsStandard);
@@ -71,6 +76,8 @@ class Topbar extends \Flake\Core\Controller {
         $oView->setData("userslink", $sUsersLink);
         $oView->setData("settingsstandardlink", $sSettingsStandardLink);
         $oView->setData("settingsdatabaselink", $sSettingsDatabaseLink);
+        $oView->setData("settingssmtplink", $sSettingsSmtpLink);
+        $oView->setData("activesettingssmtp", $sActiveSettingsSmtp);
         $oView->setData("logoutlink", $sLogoutLink);
 
         return $oView->render();
